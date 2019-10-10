@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.infocepts.sparkpoc</groupId>
   <artifactId>workspace-sparkpoc-wordcount</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.0.2-SNAPSHOT</version>
   <name>workspace-sparkpoc-wordcount</name>
   <description>Sample wordcount spark-maven project</description>
   <scm>
