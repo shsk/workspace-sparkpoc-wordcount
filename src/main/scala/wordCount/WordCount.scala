@@ -2,7 +2,7 @@ package wordCount
 import org.apache.spark.SparkConf
 import org.apache.spark.SparkContext
 import org.apache.spark.rdd.RDD.rddToPairRDDFunctions
-// version 2.0
+// version - 2.0
 object WordCount {
   def main(args: Array[String]) = {
      
