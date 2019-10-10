@@ -1,0 +1,177 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.infocepts.sparkpoc</groupId>
+  <artifactId>workspace-sparkpoc-wordcount</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <name>workspace-sparkpoc-wordcount</name>
+  <description>Sample wordcount spark-maven project</description>
+  <scm>
+ 	<connection>scm:git:ssh://git@github.com:shsk/${project.artifactId}.git</connection>
+	<developerConnection>scm:git:ssh://git@github.com:shsk/${project.artifactId}.git</developerConnection>
+	<url>ssh://git@github.com:shsk/${project.artifactId}.git</url>
+  	<tag>@{project.version}</tag> 
+  </scm>
+  <pluginRepositories>
+		<pluginRepository>
+			<id>scala-tools.org</id>
+			<name>test spark</name>
+		 
+			<url>http://scala-tools.org/repo-releases</url>
+		</pluginRepository>
+	</pluginRepositories>
+	<dependencies>
+		<dependency>
+			<groupId>org.apache.spark</groupId>
+			<artifactId>spark-core_2.10</artifactId>
+			<version>1.4.0</version>
+		</dependency>
+	</dependencies>
+	<build>
+		<plugins>
+			<!-- mixed scala/java compile -->
+			<plugin>
+				<groupId>org.scala-tools</groupId>
+				<artifactId>maven-scala-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>compile</id>
+						<goals>
+							<goal>compile</goal>
+						</goals>
+						<phase>compile</phase>
+					</execution>
+					<execution>
+						<id>test-compile</id>
+						<goals>
+							<goal>testCompile</goal>
+						</goals>
+						<phase>test-compile</phase>
+					</execution>
+					<execution>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>compile</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.7</source>
+					<target>1.7</target>
+				</configuration>
+			</plugin>
+			<!-- for fatjar -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.4</version>
+				<configuration>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
+				</configuration>
+				<executions>
+					<execution>
+						<id>assemble-all</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifest>
+							<addClasspath>true</addClasspath>
+							<mainClass>fully.qualified.MainClass</mainClass>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
+		</plugins>
+		<pluginManagement>
+			<plugins>
+				<!--This plugin's configuration is used to store Eclipse m2e settings 
+					only. It has no influence on the Maven build itself. -->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.scala-tools</groupId>
+										<artifactId> maven-scala-plugin</artifactId>
+										<versionRange> [2.15.2,)</versionRange>
+										<goals>
+											<goal>compile</goal>
+											<goal>testCompile</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<execute />
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-release-plugin</artifactId><version>2.5.3</version>
+					<configuration>
+						<goals>pre-integration-test</goals>
+						<preparationGoals>package</preparationGoals>
+						<allowtimestampedSnapshots>true</allowtimestampedSnapshots>
+						<tagNameFormat>@{project.version}</tagNameFormat>
+						<remoteTagging>false</remoteTagging>
+						</configuration>
+				</plugin>
+				<plugin>
+					<!-- https://mvnrepository.com/artifact/external.atlassian.jgitflow/jgitflow-maven-plugin -->
+					<groupId>external.atlassian.jgitflow</groupId>
+					<artifactId>jgitflow-maven-plugin</artifactId>
+					<version>1.0-m5.1</version>
+					<dependencies>
+						<dependency>
+							<groupId>com.jcraft</groupId>
+							<artifactId>jsch</artifactId>
+							<version>0.1.54</version>
+						</dependency>
+					</dependencies>
+					<configuration>
+						<!-- Enable this to push to origin using SSH keys -->
+						<enableSshAgent>true</enableSshAgent>
+						<!-- Keep your maven submodules at the same version as the parent POM -->
+						<autoVersionSubmodules>true</autoVersionSubmodules>
+						<!-- Pusing in-development features to origin allows all devs to see what each other are working on -->
+						<pushFeatures>true</pushFeatures>
+						<!--This allows the CI server (e.g. Jenkins) to automatically push new releases to origin; 
+							you can then either manually deploy them or, if you are doing Continuous
+						     Deployments, auto-deploy them to prod   -->
+						<pushReleases>true</pushReleases>
+						<!--Hot Fixes should be pushed to origin as well so that any dev can pick them up-->
+						<pushHotfixes>true</pushHotfixes>
+						<!--Prevents deployments from dev workstations so that they can be done by a CI server-->
+						<noDeploy>true</noDeploy>
+						<flowInitContext>
+						<!--You can customize your development branch name. Why? Because it's faster to type
+						'git push origin dvlp' than	'git push origin develop' ;-)-->
+						<developBranchName>development</developBranchName>
+						<!-- You can also customize your tag prefixes -->
+						<versionTagPrefix />
+						</flowInitContext>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+</project>
